@@ -1,0 +1,308 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+		<modelVersion>4.0.0</modelVersion>
+		<parent>
+				<groupId>org.example.bnd3357</groupId>
+				<artifactId>sdk-parent</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<relativePath>../sdk-parent</relativePath>
+		</parent>
+		<artifactId>osgi-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<packaging>pom</packaging>
+
+		<properties>
+				<local.index.policy>REQUIRED</local.index.policy>
+				<bnd.maven.version>4.3.0-SNAPSHOT</bnd.maven.version>
+		</properties>
+
+		<pluginRepositories>
+				<pluginRepository>
+						<id>bnd-snapshots</id>
+						<url>https://bndtools.jfrog.io/bndtools/libs-snapshot/</url>
+						<layout>default</layout>
+						<releases>
+								<enabled>false</enabled>
+						</releases>
+				</pluginRepository>
+		</pluginRepositories>
+
+		<dependencyManagement>
+				<dependencies>
+						<!-- PROVIDED -->
+						<dependency>
+								<groupId>org.osgi</groupId>
+								<artifactId>osgi.core</artifactId>
+								<version>6.0.0</version>
+								<scope>provided</scope>
+						</dependency>
+						<dependency>
+								<groupId>org.osgi</groupId>
+								<artifactId>osgi.cmpn</artifactId>
+								<version>6.0.0</version>
+								<scope>provided</scope>
+						</dependency>
+						<dependency>
+								<groupId>org.osgi</groupId>
+								<artifactId>osgi.annotation</artifactId>
+								<version>7.0.0</version>
+								<scope>provided</scope>
+						</dependency>
+
+						<!-- COMPILE -->
+						<dependency>
+								<groupId>org.osgi</groupId>
+								<artifactId>org.osgi.util.function</artifactId>
+								<version>1.1.0</version>
+						</dependency>
+						<dependency>
+								<groupId>org.osgi</groupId>
+								<artifactId>org.osgi.util.promise</artifactId>
+								<version>1.1.0</version>
+						</dependency>
+
+						<!-- TEST -->
+						<dependency>
+								<groupId>junit</groupId>
+								<artifactId>junit</artifactId>
+								<version>4.12</version>
+								<scope>test</scope>
+						</dependency>
+
+						<!-- RUNTIME -->
+						<dependency>
+								<groupId>org.osgi</groupId>
+								<artifactId>osgi.promise</artifactId>
+								<version>7.0.1</version>
+						</dependency>
+						<dependency>
+								<groupId>org.apache.felix</groupId>
+								<artifactId>org.apache.felix.framework</artifactId>
+								<version>6.0.3</version>
+								<scope>runtime</scope>
+						</dependency>
+						<dependency>
+								<groupId>org.eclipse.platform</groupId>
+								<artifactId>org.eclipse.osgi</artifactId>
+								<version>3.14.0</version>
+								<scope>runtime</scope>
+						</dependency>
+						<dependency>
+								<groupId>org.apache.felix</groupId>
+								<artifactId>org.apache.felix.scr</artifactId>
+								<version>2.1.16</version>
+								<scope>runtime</scope>
+						</dependency>
+						<dependency>
+								<groupId>org.apache.felix</groupId>
+								<artifactId>org.apache.felix.log</artifactId>
+								<version>1.2.0</version>
+								<scope>runtime</scope>
+						</dependency>
+						<dependency>
+								<groupId>org.apache.felix</groupId>
+								<artifactId>org.apache.felix.gogo.runtime</artifactId>
+								<version>1.1.2</version>
+								<scope>runtime</scope>
+						</dependency>
+						<dependency>
+								<groupId>org.apache.felix</groupId>
+								<artifactId>org.apache.felix.gogo.command</artifactId>
+								<version>1.1.0</version>
+								<scope>runtime</scope>
+						</dependency>
+						<dependency>
+								<groupId>org.apache.felix</groupId>
+								<artifactId>org.apache.felix.gogo.shell</artifactId>
+								<version>1.1.2</version>
+								<scope>runtime</scope>
+						</dependency>
+						<dependency>
+								<groupId>org.apache.felix</groupId>
+								<artifactId>org.apache.felix.gogo.jline</artifactId>
+								<version>1.1.4</version>
+								<scope>runtime</scope>
+						</dependency>
+				</dependencies>
+		</dependencyManagement>
+
+		<build>
+				<pluginManagement>
+						<plugins>
+								<!-- Add the bnd-maven-plugin to generate OSGi manifest for the contained 
+										classes, using bnd.bnd for customization. See: https://github.com/bndtools/bnd/tree/master/maven/bnd-maven-plugin -->
+								<plugin>
+										<groupId>biz.aQute.bnd</groupId>
+										<artifactId>bnd-maven-plugin</artifactId>
+										<version>${bnd.maven.version}</version>
+										<configuration>
+												<bnd><![CDATA[
+Bundle-SymbolicName: $[project.groupId].$[project.artifactId]
+Bundle-Name: ${Bundle-SymbolicName}
+
+# Include git SHA and descriptor in every bundle manifest
+Git-Descriptor: $[system-allow-fail;git describe --dirty --always --abbrev=10]
+Git-SHA: $[system-allow-fail;git rev-list -1 --no-abbrev-commit HEAD]
+
+# Force Declarative Services bundles to declare a requirement for DS version 1.3
+# even when they only use features from a previous version
+-dsannotations-options: extender, inherit
+
+-removeheaders: Private-Package
+            ]]>
+												</bnd>
+										</configuration>
+										<executions>
+												<execution>
+														<id>default-bnd-process</id>
+														<goals>
+																<goal>bnd-process</goal>
+														</goals>
+												</execution>
+										</executions>
+								</plugin>
+
+								<plugin>
+										<groupId>biz.aQute.bnd</groupId>
+										<artifactId>bnd-indexer-maven-plugin</artifactId>
+										<version>${bnd.maven.version}</version>
+										<configuration>
+												<includeJar>true</includeJar>
+												<localURLs>${local.index.policy}</localURLs>
+										</configuration>
+										<executions>
+												<execution>
+														<id>default-index</id>
+														<goals>
+																<goal>index</goal>
+														</goals>
+												</execution>
+										</executions>
+								</plugin>
+
+								<plugin>
+										<groupId>biz.aQute.bnd</groupId>
+										<artifactId>bnd-baseline-maven-plugin</artifactId>
+										<version>${bnd.maven.version}</version>
+										<configuration>
+												<fullReport>true</fullReport>
+										</configuration>
+										<executions>
+												<execution>
+														<id>baseline</id>
+														<phase>verify</phase>
+														<goals>
+																<goal>baseline</goal>
+														</goals>
+												</execution>
+										</executions>
+								</plugin>
+
+								<plugin>
+										<groupId>biz.aQute.bnd</groupId>
+										<artifactId>bnd-export-maven-plugin</artifactId>
+										<version>${bnd.maven.version}</version>
+										<executions>
+												<execution>
+														<goals>
+																<goal>export</goal>
+														</goals>
+												</execution>
+										</executions>
+								</plugin>
+
+								<plugin>
+										<groupId>biz.aQute.bnd</groupId>
+										<artifactId>bnd-testing-maven-plugin</artifactId>
+										<version>${bnd.maven.version}</version>
+										<configuration>
+												<resolve>true</resolve>
+												<failOnChanges>true</failOnChanges>
+										</configuration>
+										<executions>
+												<execution>
+														<goals>
+																<goal>testing</goal>
+														</goals>
+												</execution>
+										</executions>
+								</plugin>
+
+								<!-- This configuration is required to make maven-jar-plugin pick 
+										up the manifest generated by bnd-maven-plugin. See: https://github.com/bndtools/bnd/tree/master/maven/bnd-maven-plugin#important-note -->
+								<plugin>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-jar-plugin</artifactId>
+										<version>2.6</version>
+										<configuration>
+												<archive>
+														<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+												</archive>
+										</configuration>
+								</plugin>
+
+						</plugins>
+				</pluginManagement>
+
+				<plugins>
+						<!-- Fail fast if the running JDK is not version 1.8. This is needed 
+								because higher Java versions such as 10.0 will fail with strange errors, 
+								e.g. in JavaDoc, because of packages that have been removed from the core 
+								JDK. -->
+						<plugin>
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-enforcer-plugin</artifactId>
+								<version>3.0.0-M2</version>
+								<executions>
+										<execution>
+												<id>enforce-java</id>
+												<phase>validate</phase>
+												<goals>
+														<goal>enforce</goal>
+												</goals>
+												<configuration>
+														<rules>
+																<requireJavaVersion>
+																		<version>[1.8,1.9)</version>
+																</requireJavaVersion>
+														</rules>
+												</configuration>
+										</execution>
+								</executions>
+						</plugin>
+
+						<plugin>
+								<groupId>biz.aQute.bnd</groupId>
+								<artifactId>bnd-maven-plugin</artifactId>
+						</plugin>
+
+						<plugin>
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-source-plugin</artifactId>
+								<version>3.0.1</version>
+								<executions>
+										<execution>
+												<id>attach-sources</id>
+												<goals>
+														<goal>jar-no-fork</goal>
+												</goals>
+										</execution>
+								</executions>
+						</plugin>
+				</plugins>
+		</build>
+
+		<profiles>
+				<profile>
+						<!-- Declare a profile for CI builds, where indexes are not permitted 
+								to contain local file: URLs. -->
+						<id>CI_Deploy</id>
+						<properties>
+								<local.index.policy>FORBIDDEN</local.index.policy>
+						</properties>
+				</profile>
+		</profiles>
+</project>

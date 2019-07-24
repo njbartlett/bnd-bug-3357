@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		<modelVersion>4.0.0</modelVersion>
+		<parent>
+				<groupId>org.example.bnd3357</groupId>
+				<artifactId>osgi-parent</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<relativePath>../osgi-parent</relativePath>
+		</parent>
+		<artifactId>osgi-assembly</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+
+		<dependencies>
+				<dependency>
+						<groupId>${project.groupId}</groupId>
+						<artifactId>javafx</artifactId>
+						<version>0.0.1-SNAPSHOT</version>
+				</dependency>
+				<dependency>
+						<groupId>${project.groupId}</groupId>
+						<artifactId>javafx.swt</artifactId>
+						<version>0.0.1-SNAPSHOT</version>
+				</dependency>
+
+				<!-- THIRD PARTY -->
+				<dependency>
+						<groupId>org.osgi</groupId>
+						<artifactId>osgi.promise</artifactId>
+				</dependency>
+				<dependency>
+						<groupId>org.apache.felix</groupId>
+						<artifactId>org.apache.felix.framework</artifactId>
+				</dependency>
+				<dependency>
+						<groupId>org.eclipse.platform</groupId>
+						<artifactId>org.eclipse.osgi</artifactId>
+				</dependency>
+				<dependency>
+						<groupId>org.apache.felix</groupId>
+						<artifactId>org.apache.felix.scr</artifactId>
+				</dependency>
+				<dependency>
+						<groupId>org.apache.felix</groupId>
+						<artifactId>org.apache.felix.log</artifactId>
+				</dependency>
+				<dependency>
+						<groupId>org.apache.felix</groupId>
+						<artifactId>org.apache.felix.gogo.jline</artifactId>
+				</dependency>
+				<dependency>
+						<groupId>org.apache.felix</groupId>
+						<artifactId>org.apache.felix.gogo.command</artifactId>
+				</dependency>
+		</dependencies>
+
+		<build>
+				<plugins>
+						<plugin>
+								<groupId>biz.aQute.bnd</groupId>
+								<artifactId>bnd-indexer-maven-plugin</artifactId>
+						</plugin>
+
+						<plugin>
+								<groupId>biz.aQute.bnd</groupId>
+								<artifactId>bnd-export-maven-plugin</artifactId>
+								<configuration>
+										<resolve>true</resolve>
+										<failOnChanges>true</failOnChanges>
+										<bndruns>
+												<bndrun>assembly.bndrun</bndrun>
+										</bndruns>
+										<exporter>bnd.runbundles</exporter>
+								</configuration>
+								<executions>
+										<execution>
+												<id>resolve-linkclient</id>
+												<phase>package</phase>
+												<goals>
+														<goal>export</goal>
+												</goals>
+										</execution>
+								</executions>
+						</plugin>
+				</plugins>
+		</build>
+
+</project>

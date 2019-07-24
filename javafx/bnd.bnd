@@ -1,0 +1,62 @@
+Fragment-Host: system.bundle
+JavaFX-Version: 2.2.0
+Bundle-Name: JavaFX System Bundle Extension
+Bundle-Description: Exports JavaFX packages from the System Bundle
+
+javafx-public-packages=\
+	javafx.animation,\
+	javafx.application,\
+	javafx.beans,\
+	javafx.beans.binding,\
+	javafx.beans.property,\
+	javafx.beans.value,\
+	javafx.collections,\
+	javafx.collections.transformation,\
+	javafx.css,\
+	javafx.concurrent,\
+	javafx.event,\
+	javafx.fxml,\
+	javafx.geometry,\
+	javafx.scene,\
+	javafx.scene.chart,\
+	javafx.scene.control,\
+	javafx.scene.control.cell,\
+	javafx.scene.image,\
+	javafx.scene.input,\
+	javafx.scene.layout,\
+	javafx.scene.media,\
+	javafx.scene.paint,\
+	javafx.scene.shape,\
+	javafx.scene.text,\
+	javafx.scene.transform,\
+	javafx.scene.web,\
+	javafx.stage,\
+	javafx.util,\
+	javafx.util.converter
+
+javafx-internal-packages:\
+	com.sun.javafx.application,\
+	com.sun.javafx.collections,\
+	com.sun.javafx.css,\
+	com.sun.javafx.css.converters,\
+	com.sun.javafx.cursor,\
+	com.sun.javafx.embed,\
+	com.sun.javafx.event,\
+	com.sun.javafx.runtime,\
+	com.sun.javafx.scene.control,\
+	com.sun.javafx.scene.control.behavior,\
+	com.sun.javafx.scene.control.skin,\
+	com.sun.javafx.scene.text,\
+	com.sun.javafx.scene.traversal,\
+	com.sun.javafx.stage,\
+	com.sun.javafx.tk,\
+	com.sun.javafx.webkit,\
+	com.sun.glass.ui,\
+	com.sun.webkit
+
+-exportcontents: \
+	${replacelist;${list;javafx-public-packages};$;\\;version=${JavaFX-Version}},\
+	${javafx-internal-packages}
+
+Provide-Capability:\
+	osgi.contract; osgi.contract=JavaFX; version:Version=${JavaFX-Version}; uses:="${javafx-public-packages},${javafx-internal-packages}"
